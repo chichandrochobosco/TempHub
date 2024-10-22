@@ -1,13 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package temphub;
 
-/**
- *
- * @author L1 - PC
- */
+package temphub;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
+
 public class ServidorSocket {
+    public static void main(String[] args) {
+        
+        ServidorSocket servidor = new ServidorSocket();
+        servidor.recibirMediciones();
+    }
     
+    agregarZona(new Zona("Zona Sur", "5678"));
 }
