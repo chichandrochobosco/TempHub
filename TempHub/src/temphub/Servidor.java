@@ -1,5 +1,12 @@
 
 package temphub;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
+
+
 public class Servidor {
     private List<Zona> zonas = new ArrayList<>();
     private List<Medicion> mediciones = new ArrayList<>();
