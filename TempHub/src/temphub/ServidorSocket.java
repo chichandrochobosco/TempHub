@@ -6,11 +6,13 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ServidorSocket {
-    public static void main(String[] args) {
+  /*  public static void main(String[] args) {
         
         ServidorSocket servidor = new ServidorSocket();
-        servidor.recibirMediciones();
+        
+        
+        //Servidor.recibirMedicion(medicion);
     }
     
-    agregarZona(new Zona("Zona Sur", "5678"));
+*/    
 }

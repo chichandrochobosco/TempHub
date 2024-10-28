@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 
 public class ClienteSocket {
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Ingrese ID del sensor: ");
         String idSensor = scanner.nextLine();
@@ -23,6 +23,6 @@ public class ClienteSocket {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
 

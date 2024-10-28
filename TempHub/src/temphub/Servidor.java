@@ -1,62 +1,111 @@
 
 package temphub;
-
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
 public class Servidor {
-    private List<Zona> zonas = new ArrayList<>();
-    private List<Medicion> mediciones = new ArrayList<>();
-    
+    private List<Zona> zonas;
 
-    public void agregarZona(Zona zona) {
-        zonas.add(zona);
+    public Servidor() {
+        zonas = new ArrayList<>();
     }
 
-    public Zona autenticarZona(String nombreZona, String contrasena) {
+    public static void main(String[] args) {
+        Servidor servidor = new Servidor();
+        servidor.iniciar();
+    }
+
+    public void iniciar() {
+        Scanner scanner = new Scanner(System.in);
+        boolean salir = false;
+
+        while (!salir) {
+            System.out.println("\n=== Sistema de Monitoreo de Zonas ===");
+            System.out.println("1. Ver zonas y sus mediciones");
+            System.out.println("2. Crear una nueva zona");
+            System.out.println("3. Agregar una medición a una zona existente");
+            System.out.println("4. Salir del sistema");
+            System.out.print("Seleccione una opción: ");
+
+            int opcion = scanner.nextInt();
+            scanner.nextLine(); // Consumir nueva línea
+
+            switch (opcion) {
+                case 1:
+                    mostrarZonas();
+                    break;
+                case 2:
+                    crearZona(scanner);
+                    break;
+                case 3:
+                    agregarMedicion(scanner);
+                    break;
+                case 4:
+                    salir = true;
+                    System.out.println("Saliendo del sistema...");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor, intente de nuevo.");
+            }
+        }
+
+        scanner.close();
+    }
+
+    private void mostrarZonas() {
+        if (zonas.isEmpty()) {
+            System.out.println("No hay zonas registradas.");
+        } else {
+            System.out.println("\nZonas y mediciones:");
+            for (Zona zona : zonas) {
+                System.out.println("\n" + zona);
+                for (Medicion medicion : zona.getMediciones()) {
+                    System.out.println("  - " + medicion);
+                }
+            }
+        }
+    }
+
+    private void crearZona(Scanner scanner) {
+        System.out.print("Ingrese el nombre de la nueva zona: ");
+        String nombreZona = scanner.nextLine();
+        System.out.print("Ingrese la contraseña de la zona: ");
+        String contrasena = scanner.nextLine();
+        Zona nuevaZona = new Zona(nombreZona, contrasena);
+        zonas.add(nuevaZona);
+        System.out.println("Zona creada: " + nombreZona);
+    }
+
+    private void agregarMedicion(Scanner scanner) {
+        System.out.print("Ingrese el nombre de la zona: ");
+        String nombreZona = scanner.nextLine();
+
+        Zona zona = buscarZonaPorNombre(nombreZona);
+        if (zona == null) {
+            System.out.println("Zona no encontrada.");
+            return;
+        }
+
+        System.out.print("Ingrese la contraseña de la zona: ");
+        String contrasena = scanner.nextLine();
+        if (!zona.validarContrasena(contrasena)) {
+            System.out.println("Contraseña incorrecta.");
+            return;
+        }
+
+        Sensor sensor = new Sensor("Sensor" + (int) (Math.random() * 1000));
+        Medicion nuevaMedicion = sensor.realizarMedicion();
+        zona.agregarMedicion(nuevaMedicion);
+        System.out.println("Medición agregada: " + nuevaMedicion);
+    }
+
+    private Zona buscarZonaPorNombre(String nombreZona) {
         for (Zona zona : zonas) {
-            if (zona.getNombre().equals(nombreZona) && zona.validarContrasena(contrasena)) {
-                System.out.println("Acceso concedido a la zona: " + nombreZona);
+            if (zona.getNombre().equalsIgnoreCase(nombreZona)) {
                 return zona;
             }
         }
-        System.out.println("Acceso denegado a la zona: " + nombreZona);
         return null;
-    }
-
-    public void recibirMedicion(Medicion medicion) {
-        mediciones.add(medicion);
-        System.out.println("Medición recibida: " + medicion);
-    }
-
-    public void mostrarMediciones() {
-        System.out.println("Mediciones registradas:");
-        for (Medicion medicion : mediciones) {
-            System.out.println(medicion);
-        }
-    }
-
-    public void mostrarPromedios() {
-        double sumaTemp = 0, sumaHumedad = 0, sumaPresion = 0, sumaViento = 0, sumaPrecipitacion = 0;
-        int cantidad = mediciones.size();
-
-        for (Medicion medicion : mediciones) {
-            sumaTemp += medicion.getTemperatura();
-            sumaHumedad += medicion.getHumedad();
-            sumaPresion += medicion.getPresionAtmosferica();
-            sumaViento += medicion.getVelocidadViento();
-            sumaPrecipitacion += medicion.getPrecipitacion();
-        }
-
-        System.out.println("Promedio de temperatura: " + (sumaTemp / cantidad) + "°C");
-        System.out.println("Promedio de humedad: " + (sumaHumedad / cantidad) + "%");
-        System.out.println("Promedio de presión atmosférica: " + (sumaPresion / cantidad) + " hPa");
-        System.out.println("Promedio de velocidad del viento: " + (sumaViento / cantidad) + " km/h");
-        System.out.println("Promedio de precipitación: " + (sumaPrecipitacion / cantidad) + " mm");
     }
 }
