@@ -1,6 +1,9 @@
 
 package temphub;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
+import java.util.Date;
+
 
 public class Sensor {
     private String id;
@@ -30,7 +33,12 @@ public class Sensor {
         System.out.print("Ingrese precipitación (mm): ");
         double precipitacion = scanner.nextDouble();
         
-        return new Medicion(temperatura, humedad, presionAtmosferica, velocidadViento, direccionViento, precipitacion, id);
+        System.out.print("Ingrese fecha (formato year-month-day-hour): ");
+        String fecha = scanner.next();
+        
+        
+        
+        return new Medicion(temperatura, humedad, presionAtmosferica, velocidadViento, direccionViento, precipitacion, id, fecha);
     }
 }
 
