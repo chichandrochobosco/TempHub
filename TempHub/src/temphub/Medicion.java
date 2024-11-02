@@ -24,6 +24,15 @@ public class Medicion {
         this.fecha = fecha;
     }
 
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+    
+
     // Getters para obtener los valores
     public double getTemperatura() {
         return temperatura;

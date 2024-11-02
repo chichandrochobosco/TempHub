@@ -1,16 +1,19 @@
 
 package temphub;
-
-import java.util.Date;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Servidor {
     private List<Zona> zonas;
+    private Database database;
 
     public Servidor() {
-        zonas = new ArrayList<>();
+        database = new Database();
+        try {
+            zonas = database.cargarZonas();
+        } catch (Exception e) {
+            System.out.println("Error al cargar zonas desde la base de datos: " + e.getMessage());
+        }
     }
 
     public static void main(String[] args) {
@@ -31,7 +34,7 @@ public class Servidor {
             System.out.print("Seleccione una opción: ");
 
             int opcion = scanner.nextInt();
-            scanner.nextLine(); // Consumir nueva línea
+            scanner.nextLine();
 
             switch (opcion) {
                 case 1:
@@ -75,8 +78,14 @@ public class Servidor {
         System.out.print("Ingrese la contraseña de la zona: ");
         String contrasena = scanner.nextLine();
         Zona nuevaZona = new Zona(nombreZona, contrasena);
-        zonas.add(nuevaZona);
-        System.out.println("Zona creada: " + nombreZona);
+
+        try {
+            database.guardarZona(nuevaZona);
+            zonas.add(nuevaZona);
+            System.out.println("Zona creada: " + nombreZona);
+        } catch (Exception e) {
+            System.out.println("Error al guardar la zona: " + e.getMessage());
+        }
     }
 
     private void agregarMedicion(Scanner scanner) {
@@ -99,7 +108,13 @@ public class Servidor {
         Sensor sensor = new Sensor("Sensor" + (int) (Math.random() * 1000));
         Medicion nuevaMedicion = sensor.realizarMedicion();
         zona.agregarMedicion(nuevaMedicion);
-        System.out.println("Medición agregada: " + nuevaMedicion);
+
+        try {
+            database.guardarMedicion(zona, nuevaMedicion);
+            System.out.println("Medición agregada: " + nuevaMedicion);
+        } catch (Exception e) {
+            System.out.println("Error al guardar la medición: " + e.getMessage());
+        }
     }
 
     private Zona buscarZonaPorNombre(String nombreZona) {
@@ -111,3 +126,4 @@ public class Servidor {
         return null;
     }
 }
+

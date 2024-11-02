@@ -37,6 +37,14 @@ public class Zona {
     public String toString() {
         return "Zona: " + nombre;
     }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
     
     public Zona autenticarZona(String nombreZona, String contrasena) {
         Iterable<Zona> zonas = null;
