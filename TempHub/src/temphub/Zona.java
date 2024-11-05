@@ -7,11 +7,14 @@ import java.util.Date;
 
 
 public class Zona {
+    /*private static int contador = 1; 
+    private int idZona;*/
     private String nombre;
     private String contrasena;
     private List<Medicion> mediciones;
 
     public Zona(String nombre, String contrasena) {
+        //this.idZona = contador++;
         this.nombre = nombre;
         this.contrasena = contrasena;
         this.mediciones = new ArrayList<>();
@@ -35,7 +38,7 @@ public class Zona {
 
     @Override
     public String toString() {
-        return "Zona: " + nombre;
+        return "Zona: " + nombre ;
     }
 
     public String getContrasena() {
@@ -45,6 +48,8 @@ public class Zona {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
+
+    
     
     public Zona autenticarZona(String nombreZona, String contrasena) {
         Iterable<Zona> zonas = null;

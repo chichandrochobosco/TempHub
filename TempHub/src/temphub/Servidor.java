@@ -1,11 +1,13 @@
 
 package temphub;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Servidor {
     private List<Zona> zonas;
     private Database database;
+    
 
     public Servidor() {
         database = new Database();
@@ -15,6 +17,13 @@ public class Servidor {
             System.out.println("Error al cargar zonas desde la base de datos: " + e.getMessage());
         }
     }
+    
+    /*private void cargarZonasDesdeDB() {
+        zonas = Database.cargarZonas();
+        if (zonas == null) {
+            zonas = new ArrayList<>(); // Asegura que zonas nunca sea null
+        }
+    }*/
 
     public static void main(String[] args) {
         Servidor servidor = new Servidor();
@@ -26,6 +35,7 @@ public class Servidor {
         boolean salir = false;
 
         while (!salir) {
+            
             System.out.println("\n=== Sistema de Monitoreo de Zonas ===");
             System.out.println("1. Ver zonas y sus mediciones");
             System.out.println("2. Crear una nueva zona");
@@ -63,8 +73,10 @@ public class Servidor {
             System.out.println("No hay zonas registradas.");
         } else {
             System.out.println("\nZonas y mediciones:");
+            
             for (Zona zona : zonas) {
                 System.out.println("\n" + zona);
+                
                 for (Medicion medicion : zona.getMediciones()) {
                     System.out.println("  - " + medicion);
                 }

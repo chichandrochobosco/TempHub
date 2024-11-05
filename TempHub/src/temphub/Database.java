@@ -49,8 +49,8 @@ public class Database {
                             double temperatura = rsMediciones.getDouble("temperatura");
                             double humedad = rsMediciones.getDouble("humedad");
                             double presion = rsMediciones.getDouble("presion");
-                            double velocidad = rsMediciones.getDouble("velocidad");
-                            String direccion = rsMediciones.getString("direccion");
+                            double velocidad = rsMediciones.getDouble("velocidadViento");
+                            String direccion = rsMediciones.getString("direccionViento");
                             double precipitacion = rsMediciones.getDouble("precipitacion");
                             String idSensor = rsMediciones.getString("idSensor");
                             String fecha = rsMediciones.getString("fecha");
@@ -66,21 +66,58 @@ public class Database {
         return zonas;
     }
 
-    public void guardarMedicion(Zona zona, Medicion medicion) throws SQLException {
-        String sql = "INSERT INTO Mediciones (zona_id, temperatura, humedad, presion) VALUES ((SELECT id FROM Zonas WHERE nombre = ?), ?, ?, ?)";
+    /*public void guardarMedicion(Zona zona, Medicion medicion) throws SQLException {
+        String sql = "INSERT INTO Mediciones (temperatura, humedad, presion, velocidadViento, direccionViento, precipitacion, idSensor) VALUES ((SELECT id FROM Zonas WHERE nombre = ?), ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, zona.getNombre());
             stmt.setDouble(2, medicion.getTemperatura());
             stmt.setDouble(3, medicion.getHumedad());
             stmt.setDouble(4, medicion.getPresionAtmosferica());
-            stmt.setDouble(4, medicion.getVelocidadViento());
-            stmt.setString(4, medicion.getDireccionViento());
-            stmt.setDouble(4, medicion.getPrecipitacion());
-            stmt.setString(4, medicion.getIdSensor());
-            stmt.setString(4, medicion.getFecha());
+            stmt.setDouble(5, medicion.getVelocidadViento());
+            stmt.setString(6, medicion.getDireccionViento());
+            stmt.setDouble(7, medicion.getPrecipitacion());
+            stmt.setString(8, medicion.getIdSensor());
+            stmt.setString(9, medicion.getFecha());
+            
             
             stmt.executeUpdate();
         }
+    }*/
+    
+    public void guardarMedicion(Zona zona, Medicion medicion) throws SQLException {
+    String sql = "INSERT INTO Mediciones (temperatura, humedad, presion, velocidadViento, direccionViento, precipitacion, idSensor, fecha, zona_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"; // Se añade fecha a la consulta
+    try (Connection conn = conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        // Setear los parámetros
+        stmt.setDouble(1, medicion.getTemperatura());
+        stmt.setDouble(2, medicion.getHumedad());
+        stmt.setDouble(3, medicion.getPresionAtmosferica());
+        stmt.setDouble(4, medicion.getVelocidadViento());
+        stmt.setString(5, medicion.getDireccionViento());
+        stmt.setDouble(6, medicion.getPrecipitacion());
+        stmt.setString(7, medicion.getIdSensor());
+        stmt.setString(8, medicion.getFecha()); 
+        
+        // Obtener el idZona
+        int idZona = obtenerIdZona(zona.getNombre()); // Implementa este método para obtener el idZona
+        stmt.setInt(9, idZona); // Establece el idZona como el último parámetro
+        
+        // Ejecutar la actualización
+        stmt.executeUpdate();
     }
+}
+
+// Método para obtener el id de la zona
+    private int obtenerIdZona(String nombreZona) throws SQLException {
+    String sql = "SELECT id FROM Zonas WHERE nombre = ?";
+    try (Connection conn = conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, nombreZona);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("id");
+        } else {
+            throw new SQLException("Zona no encontrada.");
+        }
+    }
+}
 }
 

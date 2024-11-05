@@ -24,15 +24,19 @@ DROP TABLE IF EXISTS `mediciones`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mediciones` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `zona_id` int DEFAULT NULL,
   `temperatura` double DEFAULT NULL,
   `humedad` double DEFAULT NULL,
   `presion` double DEFAULT NULL,
-  `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `velocidadViento` double DEFAULT NULL,
+  `direccionViento` varchar(255) NOT NULL,
+  `precipitacion` double DEFAULT NULL,
+  `idSensor` varchar(255) NOT NULL,
+  `fecha` varchar(255) NOT NULL,
+  `zona_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `zona_id` (`zona_id`),
   CONSTRAINT `mediciones_ibfk_1` FOREIGN KEY (`zona_id`) REFERENCES `zonas` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +45,7 @@ CREATE TABLE `mediciones` (
 
 LOCK TABLES `mediciones` WRITE;
 /*!40000 ALTER TABLE `mediciones` DISABLE KEYS */;
-INSERT INTO `mediciones` VALUES (1,1,1,1,1,'2024-11-02 21:01:51');
+INSERT INTO `mediciones` VALUES (1,12,12,12,12,'N',12,'Sensor386','12',3),(2,1,1,1,1,'N',1,'Sensor840','1',1);
 /*!40000 ALTER TABLE `mediciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,7 +61,7 @@ CREATE TABLE `zonas` (
   `nombre` varchar(255) NOT NULL,
   `contrasena` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,13 +70,9 @@ CREATE TABLE `zonas` (
 
 LOCK TABLES `zonas` WRITE;
 /*!40000 ALTER TABLE `zonas` DISABLE KEYS */;
-INSERT INTO `zonas` VALUES (1,'v1','v1');
+INSERT INTO `zonas` VALUES (1,'v1','v1'),(2,'v2','v2'),(3,'zona4','zona4'),(4,'aa','aa');
 /*!40000 ALTER TABLE `zonas` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping events for database 'temphub'
---
 
 --
 -- Dumping routines for database 'temphub'
@@ -87,4 +87,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-02 18:43:25
+-- Dump completed on 2024-11-04 22:56:28
