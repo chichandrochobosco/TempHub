@@ -1,13 +1,14 @@
-
 package temphub;
+
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Servidor {
     private List<Zona> zonas;
     private Database database;
-    
+    private static final int PUERTO = 12345;
 
     public Servidor() {
         database = new Database();
@@ -15,15 +16,9 @@ public class Servidor {
             zonas = database.cargarZonas();
         } catch (Exception e) {
             System.out.println("Error al cargar zonas desde la base de datos: " + e.getMessage());
+            zonas = new ArrayList<>();
         }
     }
-    
-    /*private void cargarZonasDesdeDB() {
-        zonas = Database.cargarZonas();
-        if (zonas == null) {
-            zonas = new ArrayList<>(); // Asegura que zonas nunca sea null
-        }
-    }*/
 
     public static void main(String[] args) {
         Servidor servidor = new Servidor();
@@ -31,105 +26,35 @@ public class Servidor {
     }
 
     public void iniciar() {
-        Scanner scanner = new Scanner(System.in);
-        boolean salir = false;
+        try (ServerSocket serverSocket = new ServerSocket(PUERTO)) {
+            System.out.println("Servidor iniciado en el puerto " + PUERTO);
 
-        while (!salir) {
-            
-            System.out.println("\n=== Sistema de Monitoreo de Zonas ===");
-            System.out.println("1. Ver zonas y sus mediciones");
-            System.out.println("2. Crear una nueva zona");
-            System.out.println("3. Agregar una medición a una zona existente");
-            System.out.println("4. Salir del sistema");
-            System.out.print("Seleccione una opción: ");
+            while (true) {
+                Socket clienteSocket = serverSocket.accept();
+                System.out.println("Cliente conectado desde: " + clienteSocket.getInetAddress());
 
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (opcion) {
-                case 1:
-                    mostrarZonas();
-                    break;
-                case 2:
-                    crearZona(scanner);
-                    break;
-                case 3:
-                    agregarMedicion(scanner);
-                    break;
-                case 4:
-                    salir = true;
-                    System.out.println("Saliendo del sistema...");
-                    break;
-                default:
-                    System.out.println("Opción inválida. Por favor, intente de nuevo.");
+                // Crear un hilo para manejar al cliente
+                new Thread(new ClienteHandler(clienteSocket, this)).start();
             }
-        }
-
-        scanner.close();
-    }
-
-    private void mostrarZonas() {
-        if (zonas.isEmpty()) {
-            System.out.println("No hay zonas registradas.");
-        } else {
-            System.out.println("\nZonas y mediciones:");
-            
-            for (Zona zona : zonas) {
-                System.out.println("\n" + zona);
-                
-                for (Medicion medicion : zona.getMediciones()) {
-                    System.out.println("  - " + medicion);
-                }
-            }
+        } catch (IOException e) {
+            System.out.println("Error en el servidor: " + e.getMessage());
         }
     }
 
-    private void crearZona(Scanner scanner) {
-        System.out.print("Ingrese el nombre de la nueva zona: ");
-        String nombreZona = scanner.nextLine();
-        System.out.print("Ingrese la contraseña de la zona: ");
-        String contrasena = scanner.nextLine();
-        Zona nuevaZona = new Zona(nombreZona, contrasena);
+    public synchronized List<Zona> getZonas() {
+        return zonas;
+    }
 
+    public synchronized void agregarZona(Zona zona) {
+        zonas.add(zona);
         try {
-            database.guardarZona(nuevaZona);
-            zonas.add(nuevaZona);
-            System.out.println("Zona creada: " + nombreZona);
+            database.guardarZona(zona);
         } catch (Exception e) {
-            System.out.println("Error al guardar la zona: " + e.getMessage());
+            System.out.println("Error al guardar la zona en la base de datos: " + e.getMessage());
         }
     }
 
-    private void agregarMedicion(Scanner scanner) {
-        System.out.print("Ingrese el nombre de la zona: ");
-        String nombreZona = scanner.nextLine();
-
-        Zona zona = buscarZonaPorNombre(nombreZona);
-        if (zona == null) {
-            System.out.println("Zona no encontrada.");
-            return;
-        }
-
-        System.out.print("Ingrese la contraseña de la zona: ");
-        String contrasena = scanner.nextLine();
-        if (!zona.validarContrasena(contrasena)) {
-            System.out.println("Contraseña incorrecta.");
-            return;
-        }
-
-        Sensor sensor = new Sensor("Sensor" + (int) (Math.random() * 1000));
-        Medicion nuevaMedicion = sensor.realizarMedicion();
-        zona.agregarMedicion(nuevaMedicion);
-
-        try {
-            database.guardarMedicion(zona, nuevaMedicion);
-            System.out.println("Medición agregada: " + nuevaMedicion);
-        } catch (Exception e) {
-            System.out.println("Error al guardar la medición: " + e.getMessage());
-        }
-    }
-
-    private Zona buscarZonaPorNombre(String nombreZona) {
+    public synchronized Zona buscarZonaPorNombre(String nombreZona) {
         for (Zona zona : zonas) {
             if (zona.getNombre().equalsIgnoreCase(nombreZona)) {
                 return zona;
@@ -137,5 +62,98 @@ public class Servidor {
         }
         return null;
     }
+
+    public synchronized void guardarMedicion(Zona zona, Medicion medicion) {
+        try {
+            zona.agregarMedicion(medicion);
+            database.guardarMedicion(zona, medicion);
+        } catch (Exception e) {
+            System.out.println("Error al guardar la medición: " + e.getMessage());
+        }
+    }
 }
 
+class ClienteHandler implements Runnable {
+    private Socket socket;
+    private Servidor servidor;
+
+    public ClienteHandler(Socket socket, Servidor servidor) {
+        this.socket = socket;
+        this.servidor = servidor;
+    }
+
+    @Override
+    public void run() {
+        try (BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter salida = new PrintWriter(socket.getOutputStream(), true)) {
+
+            String opcion;
+            do {
+                salida.println("\n=== Sistema de Monitoreo de Zonas ===");
+                salida.println("1. Ver zonas y sus mediciones");
+                salida.println("2. Crear una nueva zona");
+                salida.println("3. Agregar una medición a una zona existente");
+                salida.println("4. Salir");
+                salida.println("Seleccione una opción: ");
+                
+                opcion = entrada.readLine();
+                
+                switch (opcion) {
+                    case "1":
+                        List<Zona> zonas = servidor.getZonas();
+                        if (zonas.isEmpty()) {
+                            salida.println("No hay zonas registradas.");
+                        } else {
+                            for (Zona zona : zonas) {
+                                salida.println(zona);
+                                for (Medicion medicion : zona.getMediciones()) {
+                                    salida.println("  - " + medicion);
+                                }
+                            }
+                        }
+                        break;
+                    case "2":
+                        
+                        salida.println("Ingrese el nombre de la nueva zona: ");
+                        System.out.println("a1");
+                        String nombreZona = entrada.readLine();
+                        System.out.println("a2");
+                        salida.println("Ingrese la contraseña de la zona: ");
+                        String contrasena = entrada.readLine();
+                        servidor.agregarZona(new Zona(nombreZona, contrasena));
+                        salida.println("Zona creada: " + nombreZona);
+                        break;
+                    case "3":
+                        System.out.println("llego a opcion 3");
+                        salida.println("Ingrese el nombre de la zona: ");
+                        String nombre = entrada.readLine();
+                        Zona zona = servidor.buscarZonaPorNombre(nombre);
+                        if (zona == null) {
+                            salida.println("Zona no encontrada.");
+                            break;
+                        }
+                        salida.println("Ingrese la contraseña de la zona: ");
+                        String pass = entrada.readLine();
+                        System.out.println("llego a cargar zona para ingresar medicion");
+                        if (!zona.validarContrasena(pass)) {
+                            salida.println("Contraseña incorrecta.");
+                            break;
+                        }
+                        Sensor sensor = new Sensor("Sensor" + (int) (Math.random() * 1000));
+                        Medicion medicion = sensor.realizarMedicion();
+                        
+                        servidor.guardarMedicion(zona, medicion);
+                        salida.println("Medición agregada: " + medicion);
+                        break;
+                    case "4":
+                        salida.println("Desconectando...");
+                        break;
+                    default:
+                        salida.println("Opción inválida.");
+                }
+            } while (!opcion.equals("4"));
+        } catch (IOException e) {
+            System.out.println("Error con el cliente: " + e.getMessage());
+        }
+    }
+}

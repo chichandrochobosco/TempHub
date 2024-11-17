@@ -13,6 +13,7 @@ public class Sensor {
     }
 
     public Medicion realizarMedicion() {
+        System.out.println("llego a realizar medicion");
         Scanner scanner = new Scanner(System.in);
         
         System.out.print("Ingrese temperatura (°C): ");

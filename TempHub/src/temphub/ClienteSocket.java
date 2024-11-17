@@ -1,28 +1,40 @@
-
 package temphub;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-
 public class ClienteSocket {
-   /* public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Ingrese ID del sensor: ");
-        String idSensor = scanner.nextLine();
+    private static final String HOST = "localhost";
+    private static final int PUERTO = 12345;
 
-        Sensor sensor = new Sensor(idSensor);
-        Medicion medicion = sensor.realizarMedicion();
+    public static void main(String[] args) {
+        try (Socket socket = new Socket(HOST, PUERTO);
+             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter salida = new PrintWriter(socket.getOutputStream(), true);
+             Scanner scanner = new Scanner(System.in)) {
 
-        try (Socket socket = new Socket("localhost", 12345); // Cambiar "localhost" por la IP del servidor si es necesario
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
-            out.writeObject(medicion);
-            System.out.println("Medición enviada: " + medicion);
+            String respuesta;
+            while ((respuesta = entrada.readLine()) != null) {
+                System.out.println(respuesta);
+
+                if (respuesta.endsWith("Seleccione una opción: ")) {
+                    String opcion = scanner.nextLine();
+                    
+                    salida.println(opcion);
+                }
+                if (respuesta.contains("Ingrese")) {
+                    String mensaje = scanner.nextLine();
+                    
+                    salida.println(mensaje);
+                }
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error al conectar con el servidor: " + e.getMessage());
         }
-    }*/
+    }
 }
+
+
+
 
