@@ -36,7 +36,7 @@ CREATE TABLE `mediciones` (
   PRIMARY KEY (`id`),
   KEY `zona_id` (`zona_id`),
   CONSTRAINT `mediciones_ibfk_1` FOREIGN KEY (`zona_id`) REFERENCES `zonas` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `mediciones` (
 
 LOCK TABLES `mediciones` WRITE;
 /*!40000 ALTER TABLE `mediciones` DISABLE KEYS */;
-INSERT INTO `mediciones` VALUES (1,12,12,12,12,'N',12,'Sensor386','12',3),(2,1,1,1,1,'N',1,'Sensor840','1',1);
+INSERT INTO `mediciones` VALUES (1,12,12,12,12,'n',1,'Sensor444','1211',7),(2,50,12,45,567,'S',12,'Sensor225','2024-11-18-12:38',7),(3,24,34,1,45,'N',1,'Sensor496','2024-11-18-12:44',9),(4,56,89,23,234,'S',12,'Sensor474','2024-11-19-13:00',9),(5,1,1,1,1,'o',1,'Sensor852','2024-11-18-12:50',10),(6,56,56,22,222,'n',12,'Sensor216','2024-11-19-13:00',10);
 /*!40000 ALTER TABLE `mediciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,7 +61,7 @@ CREATE TABLE `zonas` (
   `nombre` varchar(255) NOT NULL,
   `contrasena` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,13 +70,9 @@ CREATE TABLE `zonas` (
 
 LOCK TABLES `zonas` WRITE;
 /*!40000 ALTER TABLE `zonas` DISABLE KEYS */;
-INSERT INTO `zonas` VALUES (1,'v1','v1'),(2,'v2','v2'),(3,'zona4','zona4'),(4,'aa','aa');
+INSERT INTO `zonas` VALUES (7,'zonaSocket','1'),(9,'villa urquiza','12'),(10,'saav','1');
 /*!40000 ALTER TABLE `zonas` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'temphub'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -87,4 +83,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-04 22:56:28
+-- Dump completed on 2024-11-18 12:54:57
