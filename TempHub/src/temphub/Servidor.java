@@ -113,14 +113,29 @@ class ClienteHandler implements Runnable {
                                 }
                                 salida.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                             }
+
+                            salida.println("¿Desea ver los promedios de medición de alguna zona? (si/no): ");
+                            String respuesta = entrada.readLine();
+
+                            if (respuesta.equalsIgnoreCase("si")) {
+                                salida.println("Ingrese el nombre de la zona para ver los promedios: ");
+                                String nombreZona = entrada.readLine();
+                                Zona zona = servidor.buscarZonaPorNombre(nombreZona);
+                                if (zona != null) {
+                                    salida.println("Promedio de temperatura: " + zona.calcularPromedioTemperatura() + " °C");
+                                    salida.println("Promedio de humedad: " + zona.calcularPromedioHumedad() + " %");
+                                    salida.println("Promedio de presión atmosférica: " + zona.calcularPromedioPresion() + " hPa");
+                                    salida.println("Promedio de velocidad del viento: " + zona.calcularPromedioVelocidadViento() + " km/h");
+                                    salida.println("Promedio de precipitación: " + zona.calcularPromedioPrecipitacion() + " mm");
+                                } else {
+                                    salida.println("Zona no encontrada.");
+                                }
+                            }
                         }
                         break;
                     case "2":
-
                         salida.println("Ingrese el nombre de la nueva zona: ");
-                        System.out.println("a1");
                         String nombreZona = entrada.readLine();
-                        System.out.println("a2");
                         salida.println("Ingrese la contraseña de la zona: ");
                         String contrasena = entrada.readLine();
                         servidor.agregarZona(new Zona(nombreZona, contrasena));
@@ -185,3 +200,4 @@ class ClienteHandler implements Runnable {
         }
     }
 }
+

@@ -36,7 +36,7 @@ public class ClienteSwing {
         mensajesArea.setEditable(false);
         mensajesArea.setLineWrap(true);
         mensajesArea.setWrapStyleWord(true);
-        mensajesArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        mensajesArea.setFont(new Font("Arial", Font.PLAIN, 16));
         JScrollPane mensajesScrollPane = new JScrollPane(mensajesArea);
         mensajesPanel.add(mensajesScrollPane, BorderLayout.CENTER);
 
