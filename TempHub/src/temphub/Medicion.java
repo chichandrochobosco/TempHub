@@ -64,7 +64,7 @@ public class Medicion {
 
     @Override
     public String toString() {
-        return "Sensor " + idSensor + " - Temp: " + temperatura + "°C, Humedad: " + humedad + "%, Presión: " + presionAtmosferica + " hPa, Vel. Viento: " + velocidadViento + " km/h, Dir. Viento: " + direccionViento + ", Precipitación: " + precipitacion + " mm" + "fecha: " +fecha;
+        return "Sensor: " + idSensor + ", Temp: " + temperatura + "°C, Humedad: " + humedad + "%, Presión: " + presionAtmosferica + " hPa, Vel. Viento: " + velocidadViento + " km/h, Dir. Viento: " + direccionViento + ", Precipitación: " + precipitacion + " mm" + "fecha: " +fecha;
     }
 }
 

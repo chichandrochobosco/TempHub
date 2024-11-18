@@ -28,6 +28,8 @@ public class ClienteSocket {
                     
                     salida.println(mensaje);
                 }
+                
+                
             }
         } catch (IOException e) {
             System.out.println("Error al conectar con el servidor: " + e.getMessage());
